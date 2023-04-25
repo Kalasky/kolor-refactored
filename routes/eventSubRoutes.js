@@ -1,0 +1,99 @@
+const express = require('express')
+const router = express.Router()
+const crypto = require('crypto')
+
+// notification request headers for twitch
+const TWITCH_MESSAGE_ID = 'Twitch-Eventsub-Message-Id'.toLowerCase()
+const TWITCH_MESSAGE_TIMESTAMP = 'Twitch-Eventsub-Message-Timestamp'.toLowerCase()
+const TWITCH_MESSAGE_SIGNATURE = 'Twitch-Eventsub-Message-Signature'.toLowerCase()
+const MESSAGE_TYPE = 'Twitch-Eventsub-Message-Type'.toLowerCase()
+
+// notification message types
+const MESSAGE_TYPE_VERIFICATION = 'webhook_callback_verification'
+const MESSAGE_TYPE_NOTIFICATION = 'notification'
+const MESSAGE_TYPE_REVOCATION = 'revocation'
+
+const HMAC_PREFIX = 'sha256='
+
+const rewardHandler = require('../utils/notificationHandler')
+
+// middleware
+const { twitchRefreshAccessTokenMiddleware } = require('../middleware/twitchRefreshHandler')
+
+// models
+const Streamer = require('../models/Streamer')
+
+router.post('/twitch/eventsub', twitchRefreshAccessTokenMiddleware, async (req, res) => {
+  console.log('eventsub route hit')
+  let secret = getSecret()
+  let message = getHmacMessage(req)
+  let hmac = HMAC_PREFIX + getHmac(secret, message) // signature to compare
+
+  if (true === verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
+    console.log('signatures match')
+
+    // get JSON object from request body
+    let notification = req.body
+    console.log('notification: ', notification)
+
+    // Fetch the streamer information from the database using broadcaster_user_id
+    const broadcaster_user_id = notification.subscription.condition.broadcaster_user_id
+    const streamer = await Streamer.findOne({ twitchBroadcasterID: broadcaster_user_id })
+
+    // Check if the streamer exists in the database
+    if (streamer) {
+      // Add the values to the req object
+      req.streamer_username = streamer.twitchStreamername
+      req.access_token = streamer.twitchAccessToken
+      req.refresh_token = streamer.twitchRefreshToken
+
+      // Call the middleware to refresh the access token
+      twitchRefreshAccessTokenMiddleware(req, res, () => {})
+
+      // check if message type is a notification
+      if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
+        rewardHandler.handleReward(notification.event.reward.id, notification)
+        console.log(notification.event.reward)
+        res.sendStatus(204)
+      } else if (MESSAGE_TYPE_VERIFICATION === req.headers[MESSAGE_TYPE]) {
+        res.status(200).send(notification.challenge)
+      } else if (MESSAGE_TYPE_REVOCATION === req.headers[MESSAGE_TYPE]) {
+        res.sendStatus(204)
+      } else {
+        res.sendStatus(204)
+        console.log('unknown message type')
+      }
+    } else {
+      console.error(`Streamer with broadcaster_user_id ${broadcaster_user_id} not found in the database.`)
+      res.sendStatus(400)
+    }
+  } else {
+    res.sendStatus(403)
+    console.log('signatures do not match')
+  }
+})
+
+const getSecret = () => {
+  return process.env.TWITCH_WEBHOOK_SECRET
+}
+
+const getHmacMessage = (req) => {
+  let body = JSON.stringify(req.body)
+  // concatenate the message id, timestamp, and body to create the message to sign
+  return req.headers[TWITCH_MESSAGE_ID] + req.headers[TWITCH_MESSAGE_TIMESTAMP] + body
+}
+
+const getHmac = (secret, message) => {
+  // create the HMAC using the secret and message and return the hex digest
+  return crypto.createHmac('sha256', secret).update(message).digest('hex')
+}
+
+const verifyMessage = (hmac, signature) => {
+  if (!hmac || !signature) {
+    throw new Error('Both hmac and signature are required for message verification')
+  }
+  // compare the signatures using a constant time comparison to prevent timing attacks
+  return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(signature))
+}
+
+module.exports = router
