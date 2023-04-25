@@ -1,14 +1,19 @@
+// timisetup.js
 const tmi = require('tmi.js')
-const Streamer = require('../models/Streamer')
-// get the streamer name from the database
 
-let twitchClient = null
+/*
+  By using a map to store twitchClient instances, the bot can efficiently manage
+  multiple streamers and their associated clients. This approach ensures that
+  each streamer has a unique client instance, preventing conflicts and enabling
+  the bot to operate properly for every streamer.
+*/
+const clients = new Map()
 
-const setupTwitchClient = () => {
-  if (!twitchClient) {
-    twitchClient = new tmi.Client({
+const setupTwitchClient = (streamer_username) => {
+  if (!clients.has(streamer_username)) {
+    const twitchClient = new tmi.Client({
       options: { debug: true },
-      channels: ['kalaskyyy'],
+      channels: [streamer_username],
       connection: { reconnect: true },
       identity: {
         username: process.env.TWITCH_BOT_USERNAME,
@@ -16,8 +21,10 @@ const setupTwitchClient = () => {
       },
     })
     twitchClient.connect()
+
+    clients.set(streamer_username, twitchClient)
   }
-  return twitchClient
+  return clients.get(streamer_username)
 }
 
 module.exports = {

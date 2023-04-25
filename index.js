@@ -3,10 +3,12 @@ const fs = require('node:fs')
 const path = require('node:path')
 const deployCommands = require('./deploy-commands')
 const { Client, Collection, Events, GatewayIntentBits, REST, Routes } = require('discord.js')
+const { setupTwitchClient } = require('./utils/tmiSetup')
 
 // models
 const ColorRole = require('./models/ColorRole.js')
 const UserColor = require('./models/UserColor.js')
+const Streamer = require('./models/Streamer.js')
 
 // database
 const mongoose = require('mongoose')
@@ -192,6 +194,18 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((e) => console.log('DB CONNECTION ERROR: ', e))
 
+//  Initialize Twitch clients for all streamers if the bot is restarted or crashes
+const initializeTwitchClients = async () => {
+  try {
+    const streamers = await Streamer.find({})
+    streamers.forEach((streamer) => {
+      setupTwitchClient(streamer.twitchStreamername)
+    })
+  } catch (error) {
+    console.error('Error initializing Twitch clients:', error)
+  }
+}
+
 // deploy global commands when bot joins a new guild
 client.on(Events.GuildCreate, () => {
   deployCommands
@@ -199,6 +213,7 @@ client.on(Events.GuildCreate, () => {
 
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`)
+  initializeTwitchClients()
 })
 
 client.login(process.env.DISCORD_TOKEN)

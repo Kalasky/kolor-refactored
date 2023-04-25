@@ -2,9 +2,6 @@ const { applyDiscordRole } = require('./discordUtils')
 const Streamer = require('../models/Streamer')
 const Reward = require('../models/Reward')
 
-const { setupTwitchClient } = require('./tmiSetup')
-const twitchClient = setupTwitchClient()
-
 const { Client, GatewayIntentBits } = require('discord.js')
 
 const client = new Client({
@@ -100,7 +97,6 @@ const handleReward = async (rewardID, notification) => {
   const streamer = await Streamer.findOne({ twitchBroadcasterID: notification.event.broadcaster_user_id })
   // Get the Discord guild ID and streamer username from the database
   const discordGuildID = streamer.discordGuildID
-  const streamerUsername = streamer.twitchStreamername
   // fetchAndLogAllMembers(client, discordGuildID)
 
   try {
