@@ -56,7 +56,7 @@ const createEventSub = async (reward_id, broadcaster_id) => {
       },
       transport: {
         method: 'webhook',
-        callback: process.env.NGROK_TUNNEL_URL + '/events/twitch/eventsub',
+        callback: process.env.WEBHOOK_URL + '/events/twitch/eventsub',
         secret: process.env.TWITCH_WEBHOOK_SECRET,
       },
     }),
