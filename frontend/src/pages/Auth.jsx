@@ -207,7 +207,7 @@ const Auth = () => {
               />
               <div className="mt-10 m-auto text-center">
                 <a
-                  onClick={() => window.open('mailto:kalaskyr@gmail.com')}
+                  onClick={handleLogin}
                   className="rounded-md cursor-pointer bg-indigo-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Say Hello

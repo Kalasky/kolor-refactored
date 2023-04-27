@@ -30,11 +30,11 @@ const twitchRoutes = require('./routes/twitchRoutes')
 const eventSubRoutes = require('./routes/eventSubRoutes')
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'build')))
+app.use(express.static(path.resolve(__dirname, '../frontend/dist')))
 
 // Catch-all route to handle requests for non-existent routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+  res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'))
 })
 
 app.use('/api', twitchRoutes)
