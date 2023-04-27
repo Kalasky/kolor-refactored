@@ -180,7 +180,6 @@ const Auth = () => {
               <div className="lg:pr-8 lg:pt-4">
                 <div className="lg:max-w-lg">
                   <h2 className="text-base font-semibold leading-7 text-fuchsia-500">Deploy faster</h2>
-                  <button onClick={handleLogin}>Login</button>
                   <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">A better workflow</p>
                   <p className="mt-6 text-lg leading-8 text-white">
                     Spotifly brings a new level of interactivity to Twitch streams, making music a shared experience. The go-to
@@ -206,6 +205,14 @@ const Auth = () => {
                 width={2432}
                 height={1442}
               />
+              <div className="mt-10 m-auto text-center">
+                <a
+                  onClick={() => window.open('mailto:kalaskyr@gmail.com')}
+                  className="rounded-md cursor-pointer bg-indigo-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Say Hello
+                </a>
+              </div>
             </div>
           </div>
         </div>
