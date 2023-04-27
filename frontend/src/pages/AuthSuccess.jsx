@@ -9,4 +9,4 @@ const AuthSuccess = () => {
   )
 }
 
-module.exports = AuthSuccess
+export default AuthSuccess
