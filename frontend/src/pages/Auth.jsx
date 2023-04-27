@@ -40,7 +40,7 @@ const features = [
   },
 ]
 
-const Kolor = () => {
+const Auth = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -59,6 +59,13 @@ const Kolor = () => {
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
+
+  const clientId = process.env.REACT_APP_TWITCH_CLIENT_ID
+  const redirectUri = process.env.REACT_APP_TWITCH_REDIRECT_URI
+
+  const handleLogin = () => {
+    window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=channel:manage:redemptions channel:read:redemptions channel:manage:vips chat:edit chat:read`
+  }
 
   return (
     <div>
@@ -173,6 +180,7 @@ const Kolor = () => {
               <div className="lg:pr-8 lg:pt-4">
                 <div className="lg:max-w-lg">
                   <h2 className="text-base font-semibold leading-7 text-fuchsia-500">Deploy faster</h2>
+                  <button onClick={handleLogin}>Login</button>
                   <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">A better workflow</p>
                   <p className="mt-6 text-lg leading-8 text-white">
                     Spotifly brings a new level of interactivity to Twitch streams, making music a shared experience. The go-to
@@ -207,4 +215,4 @@ const Kolor = () => {
   )
 }
 
-export default Kolor
+export default Auth

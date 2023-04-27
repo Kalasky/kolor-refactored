@@ -39,6 +39,11 @@ router.get('/twitch/callback', async (req, res) => {
   })
 
   const tokenData = await tokenResponse.json()
+
+  if (tokenData.error) {
+    return res.status(401).json({ error: 'Failed to authenticate with Twitch' })
+  }
+
   accessToken = tokenData.access_token
   refreshToken = tokenData.refresh_token
 
@@ -76,7 +81,7 @@ router.get('/twitch/callback', async (req, res) => {
         console.log('Something wrong when updating data!', err)
       })
 
-    res.redirect('www.frosky.org')
+    res.redirect('www.frosky.org/auth/success')
   } else {
     // If user is not in the database, create a new user
     const newUser = new Streamer({
@@ -87,7 +92,7 @@ router.get('/twitch/callback', async (req, res) => {
       discordGuildID: 'TBD',
     })
     await newUser.save()
-    res.redirect('www.frosky.org')
+    res.redirect('www.frosky.org/auth/success')
   }
 })
 
