@@ -1,6 +1,5 @@
 const Streamer = require('../models/Streamer')
-const { setupTwitchClient } = require('../utils/tmiSetup')
-const twitchClient = setupTwitchClient()
+const { getTwitchClient } = require('../utils/tmiSetup')
 
 // this function will encode the data object into a query string for the fetch request
 const encodeFormData = (data) => {
@@ -72,7 +71,8 @@ const twitchRefreshAccessTokenMiddleware = async (req, res, next) => {
         req.user = { ...streamer, twitchAccessToken: newToken }
         next()
       } else {
-        console.error('Twitch Refresh token FAILED. Visit https://frosky.org/api/twitch/login to renew your tokens.')
+        console.error('Twitch Refresh token FAILED. Visit http://localhost:8888/api/spotify/callback to renew your tokens.')
+        const twitchClient = getTwitchClient(streamer.twitchStreamername)
         twitchClient.say(streamer.twitchStreamername, 'Twitch Refresh token FAILED. Check the console for more info.')
       }
     }
@@ -86,7 +86,7 @@ const twitchHandler = async (broadcaster_user_id) => {
 
   if (!streamer) {
     console.error('Streamer not found')
-    return 
+    return
   }
 
   try {
@@ -109,7 +109,8 @@ const twitchHandler = async (broadcaster_user_id) => {
       if (newToken) {
         console.log('New access token generated successfully!')
       } else {
-        console.error('Twitch Refresh token FAILED. Visit https://frosky.org/api/twitch/login to renew your tokens.')
+        console.error('Twitch Refresh token FAILED. Visit http://localhost:7777/api/spotify/callback to renew your tokens.')
+        const twitchClient = getTwitchClient(streamer.twitchStreamername)
         twitchClient.say(streamer.twitchStreamername, 'Twitch Refresh token FAILED. Check the console for more info.')
       }
     }

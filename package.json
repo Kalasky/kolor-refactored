@@ -1,24 +1,22 @@
 {
-  "name": "weather-discord-bot",
+  "name": "kolor",
   "version": "1.0.0",
-  "description": "",
+  "description": "> kolor is a bot that interact with Twitch and Discord.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "dev": "concurrently \"cd backend && npm start\" \"cd frontend && npm run dev\" "
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kalasky/kolor-refactored.git"
+  },
+  "author": "kalasky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kalasky/kolor-refactored/issues"
+  },
+  "homepage": "https://github.com/Kalasky/kolor-refactored#readme",
   "dependencies": {
-    "color-name-list": "^10.7.0",
-    "color-namer": "^1.4.0",
-    "discord.js": "^14.6.0",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "mongoose": "^7.0.4",
-    "nodemon": "^2.0.20",
-    "qs": "^6.11.1",
-    "tmi.js": "^1.8.5"
+    "concurrently": "^8.0.1"
   }
 }

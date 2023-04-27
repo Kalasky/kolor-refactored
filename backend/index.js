@@ -3,7 +3,9 @@ const fs = require('node:fs')
 const path = require('node:path')
 const deployCommands = require('./deploy-commands')
 const { Client, Collection, Events, GatewayIntentBits, REST, Routes } = require('discord.js')
-const { setupTwitchClient } = require('./utils/tmiSetup')
+const { handleMessage } = require('./utils/twitchCmdUtils')
+const { getClientOptions } = require('./utils/tmiSetup')
+const tmi = require('tmi.js')
 
 // models
 const ColorRole = require('./models/ColorRole.js')
@@ -26,6 +28,14 @@ app.use(express.raw({ type: 'application/json' }))
 // routes
 const twitchRoutes = require('./routes/twitchRoutes')
 const eventSubRoutes = require('./routes/eventSubRoutes')
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'build')))
+
+// Catch-all route to handle requests for non-existent routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
 
 app.use('/api', twitchRoutes)
 app.use('/events', eventSubRoutes)
@@ -194,17 +204,23 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((e) => console.log('DB CONNECTION ERROR: ', e))
 
-//  Initialize Twitch clients for all streamers if the bot is restarted or crashes
+// Initialize Twitch clients for all streamers if the bot is restarted or crashes
 const initializeTwitchClients = async () => {
   try {
     const streamers = await Streamer.find({})
     streamers.forEach((streamer) => {
-      setupTwitchClient(streamer.twitchStreamername)
+      const streamer_username = streamer.twitchStreamername
+      const options = getClientOptions(streamer_username) // get options for each streamer in the database (client id, etc.)
+      const twitchClient = new tmi.Client(options) // create a new client instance for each streamer in the database
+      twitchClient.on('message', handleMessage) // add message handler to client instance for each streamer in the database
+      twitchClient.connect()
     })
   } catch (error) {
     console.error('Error initializing Twitch clients:', error)
   }
 }
+
+initializeTwitchClients()
 
 // deploy global commands when bot joins a new guild
 client.on(Events.GuildCreate, () => {
@@ -213,22 +229,21 @@ client.on(Events.GuildCreate, () => {
 
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`)
-  initializeTwitchClients()
 })
 
 client.login(process.env.DISCORD_TOKEN)
 
 // twitch commands
-const {
-  createColorRewards,
-  createEventSubCommand,
-  dumpEventSubsCommand,
-  eventSubListCommand,
-  getStreamerData,
-} = require('./utils/twitchCmdUtils')
+// const {
+//   createColorRewards,
+//   createEventSubCommand,
+//   dumpEventSubsCommand,
+//   eventSubListCommand,
+//   getStreamerData,
+// } = require('./utils/twitchCmdUtils')
 
-createColorRewards()
-createEventSubCommand()
-dumpEventSubsCommand()
-eventSubListCommand()
-getStreamerData()
+// createColorRewards()
+// createEventSubCommand()
+// dumpEventSubsCommand()
+// eventSubListCommand()
+// getStreamerData()
