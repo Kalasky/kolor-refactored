@@ -71,7 +71,7 @@ const twitchRefreshAccessTokenMiddleware = async (req, res, next) => {
         req.user = { ...streamer, twitchAccessToken: newToken }
         next()
       } else {
-        console.error('Twitch Refresh token FAILED. Visit http://localhost:8888/api/spotify/callback to renew your tokens.')
+        console.error('Twitch Refresh token failed. Visit https://www.frosky.org/auth to renew your tokens.')
         const twitchClient = getTwitchClient(streamer.twitchStreamername)
         twitchClient.say(streamer.twitchStreamername, 'Twitch Refresh token FAILED. Check the console for more info.')
       }
@@ -109,7 +109,7 @@ const twitchHandler = async (broadcaster_user_id) => {
       if (newToken) {
         console.log('New access token generated successfully!')
       } else {
-        console.error('Twitch Refresh token FAILED. Visit http://localhost:7777/api/spotify/callback to renew your tokens.')
+        console.error('Twitch Refresh token failed. Visit https://www.frosky.org/auth to renew your tokens.')
         const twitchClient = getTwitchClient(streamer.twitchStreamername)
         twitchClient.say(streamer.twitchStreamername, 'Twitch Refresh token FAILED. Check the console for more info.')
       }

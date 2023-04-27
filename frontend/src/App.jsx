@@ -4,8 +4,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 // pages
 import Home from './pages/Home'
 import Auth from './pages/Auth'
-import AuthSuccess from './pages/AuthSuccess'
+import AuthCallback from './pages/AuthCallback'
 import AuthError from './pages/AuthError'
+import AuthSuccess from './pages/AuthSuccess'
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/auth/success" element={<AuthSuccess />} />
+          <Route path="/api/twitch/callback" element={<AuthCallback />} />
           <Route path="/auth-error" element={<AuthError />} />
+          <Route path="/auth/success" element={<AuthSuccess />} />
         </Routes>
       </BrowserRouter>
     </div>

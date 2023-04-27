@@ -20,9 +20,14 @@ const handleMessage = async (channel, tags, message, self) => {
   // grab the broadcaster id from the streamer
   const broadcaster_id = streamer.twitchBroadcasterID
   // refresh the middleware
-  await refreshMiddleware(broadcaster_id)
 
   if (self) return
+
+  // if the message is not a command return, preventing the refresh middleware from being called on every message
+  const isCommand = message.startsWith('!')
+  if (!isCommand) return
+
+  await refreshMiddleware(broadcaster_id)
 
   const command = message.slice(1).split(' ')[0].toLowerCase()
   switch (command) {

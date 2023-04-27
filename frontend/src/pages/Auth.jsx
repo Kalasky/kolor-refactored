@@ -64,9 +64,8 @@ const Auth = () => {
   const redirectUri = 'https://www.frosky.org/api/twitch/callback'
 
   const handleLogin = () => {
-    window.location.href = 'https://www.frosky.org/api/twitch/login';
-  };
-  
+    window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=channel:manage:redemptions channel:read:redemptions channel:manage:vips chat:edit chat:read`
+  }
 
   return (
     <div>
@@ -209,7 +208,7 @@ const Auth = () => {
               <div className="mt-10 m-auto text-center">
                 <a
                   onClick={handleLogin}
-                  className="rounded-md cursor-pointer bg-indigo-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="login-button rounded-md cursor-pointer bg-indigo-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Say Hello
                 </a>

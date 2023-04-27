@@ -31,6 +31,9 @@ app.use(cors())
 const twitchRoutes = require('./routes/twitchRoutes')
 const eventSubRoutes = require('./routes/eventSubRoutes')
 
+app.use('/api', twitchRoutes)
+app.use('/events', eventSubRoutes)
+
 // Serve static files from the React app
 app.use(express.static(path.resolve(__dirname, '../frontend/dist')))
 
@@ -39,8 +42,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'))
 })
 
-app.use('/api', twitchRoutes)
-app.use('/events', eventSubRoutes)
 
 app.get('/', (req, res) => {
   res.send('Access token and refresh token successfully refreshed! You can close this window now.')
