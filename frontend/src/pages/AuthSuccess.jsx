@@ -9,7 +9,7 @@ const TwitchCallback = () => {
     const code = urlParams.get('code')
 
     if (code) {
-      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/twitch/callback?code=${code}`)
+      fetch(`https://www.frosky.org/api/twitch/callback?code=${code}`)
         .then((response) => {
           if (response.ok) {
             navigate('/auth/success')
