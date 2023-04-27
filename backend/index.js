@@ -6,6 +6,7 @@ const { Client, Collection, Events, GatewayIntentBits, REST, Routes } = require(
 const { handleMessage } = require('./utils/twitchCmdUtils')
 const { getClientOptions } = require('./utils/tmiSetup')
 const tmi = require('tmi.js')
+const cors = require('cors')
 
 // models
 const ColorRole = require('./models/ColorRole.js')
@@ -24,6 +25,7 @@ const PORT = process.env.PORT || 7777
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(express.raw({ type: 'application/json' }))
+app.use(cors())
 
 // routes
 const twitchRoutes = require('./routes/twitchRoutes')
