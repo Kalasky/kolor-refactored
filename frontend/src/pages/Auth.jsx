@@ -64,8 +64,9 @@ const Auth = () => {
   const redirectUri = 'https://www.frosky.org/api/twitch/callback'
 
   const handleLogin = () => {
-    window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=channel:manage:redemptions channel:read:redemptions channel:manage:vips chat:edit chat:read`
-  }
+    window.location.href = 'https://www.frosky.org/api/twitch/login';
+  };
+  
 
   return (
     <div>
