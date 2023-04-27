@@ -81,7 +81,7 @@ router.get('/twitch/callback', async (req, res) => {
         console.log('Something wrong when updating data!', err)
       })
 
-    res.status(200).json({ success: true })
+    res.send('<script>window.close();</script>')
   } else {
     // If user is not in the database, create a new user
     const newUser = new Streamer({
@@ -92,7 +92,7 @@ router.get('/twitch/callback', async (req, res) => {
       discordGuildID: 'TBD',
     })
     await newUser.save()
-    res.status(200).json({ success: true })
+    res.send('<script>window.close();</script>')
   }
 })
 
