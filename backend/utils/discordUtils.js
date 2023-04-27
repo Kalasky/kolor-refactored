@@ -1,7 +1,6 @@
 const { Client, GatewayIntentBits } = require('discord.js')
 
-const { setupTwitchClient } = require('./tmiSetup')
-const twitchClient = setupTwitchClient()
+const { getTwitchClient } = require('./tmiSetup')
 
 const client = new Client({
   intents: [
@@ -22,6 +21,25 @@ const Reward = require('../models/Reward')
 
 // twitch utils
 const { cancelTwitchReward } = require('./twitchUtils')
+
+// Helper function that takes care of waiting for the Twitch client to be ready before sending a message
+const sendMessage = async (twitchClient, streamer_username, message) => {
+  if (twitchClient.readyState() === 'OPEN') {
+    try {
+      twitchClient.say(streamer_username, message)
+    } catch (error) {
+      console.error(error)
+    }
+  } else {
+    twitchClient.once('connected', () => {
+      try {
+        twitchClient.say(streamer_username, message)
+      } catch (error) {
+        console.error(error)
+      }
+    })
+  }
+}
 
 const updateUserColorRoles = async (rewardField, userId, roleId) => {
   try {
@@ -65,6 +83,7 @@ const applyDiscordRole = async (rewardField, rewardId, discordInfo, discordGuild
   // Streamer info
   const broadcasterId = await Reward.findOne({ twitchRewardID: rewardId })
   const streamer = await Streamer.findOne({ twitchBroadcasterID: broadcasterId.twitchBroadcasterID })
+  const twitchClient = await getTwitchClient(streamer.twitchStreamername)
 
   if (!user) {
     // User not found in the Discord server, cancel the Twitch reward and inform the user in Twitch chat
@@ -72,9 +91,12 @@ const applyDiscordRole = async (rewardField, rewardId, discordInfo, discordGuild
 
     await cancelTwitchReward(broadcasterId.twitchBroadcasterID, rewardId, redemptionId, streamer.twitchAccessToken)
 
-    // Send a message in Twitch chat to inform the user
-    const chatMessage = `@${redeemerUsername}, your reward has been refunded as you are not in the Discord server.`
-    twitchClient.say(streamer.twitchStreamername, chatMessage)
+    // Send a message in Twitch chat to inform the user that the reward has been refunded
+    sendMessage(
+      twitchClient,
+      streamer.twitchStreamername,
+      `@${redeemerUsername}, your reward has been refunded as you are not in the Discord server.`
+    )
 
     return
   }
@@ -94,14 +116,22 @@ const applyDiscordRole = async (rewardField, rewardId, discordInfo, discordGuild
       // Apply the role to the user in Discord
       await user.roles.add(selectedRole.roleId)
       console.log(`Role ${selectedRole.roleId} added to user ${user.user.username}#${user.user.discriminator}`)
+      sendMessage(
+        twitchClient,
+        streamer.twitchStreamername,
+        `@${redeemerUsername}, you have been given a very slight color role in the streamer\'s Discord server.`
+      )
 
       // Update the user's color roles in the database
       await updateUserColorRoles(rewardField, user.id, selectedRole.roleId)
     } else {
       console.log(`No available color roles for user ${user.user.username}#${user.user.discriminator}`)
-      twitchClient.say(
+
+      const twitchClient = await getTwitchClient(streamer.twitchStreamername)
+      sendMessage(
+        twitchClient,
         streamer.twitchStreamername,
-        `@${redeemerUsername}, You have reached the maximum number of very slight color roles. In the streamer\'s Discord server, yoou can run the command /trade-very-slight to trade all of your very slight color roles for a slight color role.`
+        `@${redeemerUsername}, you have reached the maximum number of very slight color roles. In the streamer's Discord server, run the command /trade-very-slight to trade all of your very slight color roles for a slight color role.`
       )
     }
   } else {

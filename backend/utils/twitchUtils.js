@@ -1,10 +1,28 @@
 // Description: This file contains all the functions that are used to interact with the Twitch API
-const { setupTwitchClient } = require('./tmiSetup')
-const twitchClient = setupTwitchClient()
+const { getTwitchClient } = require('./tmiSetup')
 
 // models
 const Streamer = require('../models/Streamer')
 const Reward = require('../models/Reward')
+
+// Helper function that takes care of waiting for the Twitch client to be ready before sending a message
+const sendMessage = async (twitchClient, streamer_username, message) => {
+  if (twitchClient.readyState() === 'OPEN') {
+    try {
+      twitchClient.say(streamer_username, message)
+    } catch (error) {
+      console.error(error)
+    }
+  } else {
+    twitchClient.once('connected', () => {
+      try {
+        twitchClient.say(streamer_username, message)
+      } catch (error) {
+        console.error(error)
+      }
+    })
+  }
+}
 
 // get streamer user data
 const getUser = async (streamer_username, access_token) => {
@@ -39,7 +57,7 @@ const eventSubList = async () => {
 }
 
 // create a webhook eventsub subscription for a specific channel reward
-const createEventSub = async (reward_id, broadcaster_id) => {
+const createEventSub = async (reward_id, broadcaster_id, streamer_username) => {
   const res = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
     method: 'POST',
     headers: {
@@ -61,6 +79,11 @@ const createEventSub = async (reward_id, broadcaster_id) => {
       },
     }),
   })
+
+  const twitchClient = await getTwitchClient(streamer_username)
+
+  sendMessage(twitchClient, streamer_username, 'EventSub created!')
+
   const data = await res.json()
   console.log(data.data)
 }
@@ -75,7 +98,8 @@ const createReward = async (
   is_global_cooldown_enabled,
   global_cooldown_seconds,
   broadcaster_id,
-  access_token
+  access_token,
+  streamer_username
 ) => {
   try {
     const res = await fetch(`https://api.twitch.tv/helix/channel_points/custom_rewards?broadcaster_id=${broadcaster_id}`, {
@@ -98,6 +122,10 @@ const createReward = async (
     })
     const data = await res.json()
     console.log('Reward Name:', data.data[0].title, 'Reward ID:', data.data[0].id)
+
+    const twitchClient = await getTwitchClient(streamer_username)
+
+    sendMessage(twitchClient, streamer_username, 'Reward created!')
 
     // Save the reward id's in the database
     await Reward.findOneAndUpdate(
@@ -143,11 +171,19 @@ const dumpEventSubs = async (streamer_username) => {
   })
   const data = await res.json()
 
-  for (let i = 0; i < data.data.length; i++) {
-    console.log('Unsubbed to:', data.data[i].id)
-    deleteEventSub(data.data[i].id)
+  const twitchClient = await getTwitchClient(streamer_username)
+
+  // Check if there are any events to delete
+  if (data.data.length > 0) {
+    for (let i = 0; i < data.data.length; i++) {
+      console.log('Unsubbed to:', data.data[i].id)
+      await deleteEventSub(data.data[i].id)
+    }
+    await sendMessage(twitchClient, streamer_username, 'Deleted all eventsub subscriptions')
+  } else {
+    console.log('No eventsub subscriptions to delete')
+    await sendMessage(twitchClient, streamer_username, 'No eventsub subscriptions to delete')
   }
-  twitchClient.say(streamer_username, 'All eventsub subscriptions have been deleted.')
 }
 
 // fulfill twitch channel reward from the redemption queue
