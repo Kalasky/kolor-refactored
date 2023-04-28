@@ -42,7 +42,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'))
 })
 
-
 app.get('/', (req, res) => {
   res.send('Access token and refresh token successfully refreshed! You can close this window now.')
 })
@@ -121,6 +120,9 @@ async function handleSelectMenu(interaction, removeCategory, addCategory) {
   const member = interaction.guild.members.cache.get(userId)
   console.log(`Removing roles from the user: ${userId}`) // Log statement
 
+  // Defer the reply
+  await interaction.deferReply({ ephemeral: true })
+
   // Remove all roles from the user in the removeCategory
   for (const roleId of userColor[removeCategory]) {
     console.log(`Removing role: ${roleId}`) // Log statement
@@ -138,7 +140,7 @@ async function handleSelectMenu(interaction, removeCategory, addCategory) {
 
   await userColor.save()
 
-  interaction.reply(`You have successfully traded your ${removeCategory} roles for the selected ${addCategory} role.`)
+  interaction.editReply(`You have successfully traded your ${removeCategory} roles for the selected ${addCategory} role.`)
 }
 
 client.on(Events.InteractionCreate, async (interaction) => {

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
-import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/react/20/solid'
+import { Link } from 'react-router-dom'
 
 // assets
 import spotiflyCode from '../assets/spotifly-code.svg'
@@ -15,29 +15,8 @@ import { scrollToSection } from '../utils/utils'
 import Footer from '../components/Footer'
 
 const navigation = [
-  { name: 'Skills', sectionId: 'skills' },
-  { name: 'Projects', sectionId: 'projects' },
-  { name: 'Contact', sectionId: 'contact' },
-  { name: 'Resume', sectionId: '' },
-]
-
-const features = [
-  {
-    name: 'Push to deploy.',
-    description:
-      'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
-    icon: CloudArrowUpIcon,
-  },
-  {
-    name: 'SSL certificates.',
-    description: 'Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.',
-    icon: LockClosedIcon,
-  },
-  {
-    name: 'Database backups.',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
-    icon: ServerIcon,
-  },
+  { name: 'Home', sectionId: '/' },
+  { name: 'Auth', sectionId: '/auth' },
 ]
 
 const Auth = () => {
@@ -69,7 +48,7 @@ const Auth = () => {
 
   return (
     <div>
-      <div className="overflow-hidden bg-slate-900 py-24 sm:py-32">
+      <div className="overflow-hidden bg-slate-900 py-24 sm:py-32 min-h-screen">
         {showBackToTop && (
           <button
             onClick={() => scrollToSection('home')}
@@ -86,9 +65,9 @@ const Auth = () => {
               <a
                 href="/"
                 className="hero text-4xl text-white m-auto no-underline"
-                style={{ position: 'relative', fontFamily: 'Merriweather Sans, sans-serif' }}
+                style={{ position: 'relative', fontFamily: 'Satisfy, sans-serif' }}
               >
-                RK
+                kolor
               </a>
             </div>
             <div className="flex lg:hidden">
@@ -103,17 +82,9 @@ const Auth = () => {
             </div>
             <div className="hidden lg:flex lg:gap-x-12">
               {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={`#${item.sectionId}`}
-                  className="text-sm font-semibold leading-6 text-white no-underline"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    scrollToSection(item.sectionId)
-                  }}
-                >
+                <Link key={item.name} to={item.sectionId} className="text-sm font-semibold leading-6 text-white no-underline">
                   {item.name}
-                </a>
+                </Link>
               ))}
             </div>
           </nav>
@@ -130,9 +101,9 @@ const Auth = () => {
                   <a
                     href="#"
                     className="hero text-4xl text-white m-auto no-underline"
-                    style={{ position: 'relative', fontFamily: 'Merriweather Sans, sans-serif' }}
+                    style={{ position: 'relative', fontFamily: 'Satisfy, sans-serif' }}
                   >
-                    RK
+                    kolor
                   </a>
                 </div>
                 <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
@@ -144,18 +115,14 @@ const Auth = () => {
                 <div className="-my-6 divide-y divide-gray-500/10">
                   <div className="space-y-2 py-6">
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
-                        href={`#${item.sectionId}`}
+                        to={item.sectionId}
                         className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700/10"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          scrollToSection(item.sectionId)
-                          setMobileMenuOpen(false)
-                        }}
+                        onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -179,40 +146,39 @@ const Auth = () => {
             <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
               <div className="lg:pr-8 lg:pt-4">
                 <div className="lg:max-w-lg">
-                  <h2 className="text-base font-semibold leading-7 text-fuchsia-500">Deploy faster</h2>
-                  <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">A better workflow</p>
+                  <h2 className="text-base font-semibold leading-7 text-fuchsia-500">Authorization</h2>
+                  <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Let's get started...</p>
                   <p className="mt-6 text-lg leading-8 text-white">
-                    Spotifly brings a new level of interactivity to Twitch streams, making music a shared experience. The go-to
-                    tool for streamers and viewers looking to enhance their musical experience on Twitch.
+                    Click the <strong>Twitch Login</strong> button below to authorize kolor bot for your Twitch channel. Once
+                    authorized, <strong>add the bot</strong> to your streamer Discord server.
                   </p>
-                  <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-white lg:max-w-none">
-                    {features.map((feature) => (
-                      <div key={feature.name} className="relative pl-9">
-                        <dt className="inline font-semibold text-fuchsia-500">
-                          <feature.icon className="absolute left-1 top-1 h-5 w-5 text-white" aria-hidden="true" />
-                          {feature.name}
-                        </dt>{' '}
-                        <dd className="inline">{feature.description}</dd>
+                  <div className="mt-10 max-w-xl space-y-8 text-base leading-7 text-white lg:max-w-none">
+                    <div className="mt-10 text-left max-sm:text-center">
+                      <div className="max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-4 lg:flex-row lg:gap-4">
+                        <a
+                          onClick={handleLogin}
+                          className="rounded-md cursor-pointer bg-purple-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-purple-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        >
+                          Twitch Login
+                        </a>
+                        <a
+                          href="https://discord.com/api/oauth2/authorize?client_id=1098510093529665556&permissions=277293943872&scope=bot%20applications.commands"
+                          className="md:ml-10 rounded-md cursor-pointer bg-blue-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        >
+                          Add To Server
+                        </a>
                       </div>
-                    ))}
-                  </dl>
+                    </div>
+                  </div>
                 </div>
               </div>
               <img
                 src={spotiflyCode}
                 alt="Product screenshot"
-                className="w-[48rem] max-w-none rounded-xl shadow-xl sm:w-[57rem] md:-ml-4 lg:-ml-0"
+                className="w-[48rem] lg:max-w-full rounded-xl sm:w-[57rem] md:-ml-4 lg:-ml-0"
                 width={2432}
                 height={1442}
               />
-              <div className="mt-10 m-auto text-center">
-                <a
-                  onClick={handleLogin}
-                  className="login-button rounded-md cursor-pointer bg-indigo-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Say Hello
-                </a>
-              </div>
             </div>
           </div>
         </div>
