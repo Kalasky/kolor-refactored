@@ -5,15 +5,14 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import demoGif from '../assets/demo.gif'
+import '../index.scss'
 
 // utils
 import { scrollToSection } from '../utils/utils'
 
-// assets
-import spotiflyCode from '../assets/spotifly-code.svg'
-
 // components
 import Footer from '../components/Footer'
+import Accordian from '../components/Accordian'
 
 const navigation = [
   { name: 'Home', sectionId: '/' },
@@ -140,15 +139,16 @@ const Home = () => {
             <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
               <div className="lg:pr-8 lg:pt-4">
                 <div className="lg:max-w-lg">
-                  <h2 className="text-base font-semibold leading-7 text-fuchsia-500">Add some color to your community!</h2>
-                  <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">kolor</p>
-                  <p className="mt-6 text-lg leading-8 text-white">
+                  <p className="mt-2 lg:text-6xl font-bold tracking-tight text-white max-sm:text-4xl">
+                    Add A Splash Of Color To Your Community
+                  </p>
+                  <p className="mt-6 text-lg leading-8 text-white max-sm:text-lg">
                     kolor rewards your twitch viewers with a unique color role in your Discord server. There are 3 color tiers for
                     viewers to unlock: Very Slight Colors, Slight Colors, and Full Colors!
                   </p>
                   <div className="mt-10 max-w-xl space-y-8 text-base leading-7 text-white lg:max-w-none">
-                    <div className="mt-10 text-left max-sm:text-center">
-                      <div className="max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-4 lg:flex-row lg:gap-4">
+                    <div className="mt-10 text-left ">
+                      <div className="">
                         <a
                           href="/auth"
                           className="rounded-md cursor-pointer bg-red-600 px-7 py-3 text-md font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -167,7 +167,15 @@ const Home = () => {
                 width={2432}
                 height={1442}
               />
+      
             </div>
+              <div className="mousey m-auto text-center mt-28">
+                <div className="scroller"></div>
+              </div>
+            <p className="mt-28 mb-16 lg:text-6xl font-bold tracking-tight text-white max-sm:text-6xl text-center">
+              Features
+            </p>
+            <Accordian />
           </div>
         </div>
       </div>

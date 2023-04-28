@@ -143,17 +143,17 @@ const Auth = () => {
           </div>
 
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+            <div className="mx-auto grid max-w-2xl text-center">
               <div className="lg:pr-8 lg:pt-4">
-                <div className="lg:max-w-lg">
+                <div className="">
                   <h2 className="text-base font-semibold leading-7 text-fuchsia-500">Authorization</h2>
-                  <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Let's get started...</p>
-                  <p className="mt-6 text-lg leading-8 text-white">
+                  <p className="mt-2 lg:text-6xl font-bold tracking-tight text-white max-sm:text-4xl">Let's Get Started</p>
+                  <p className="mt-6 text-lg leading-8 text-white max-sm:text-lg">
                     Click the <strong>Twitch Login</strong> button below to authorize kolor bot for your Twitch channel. Once
-                    authorized, <strong>add the bot</strong> to your streamer Discord server.
+                    authorized, <strong>add the bot</strong> to your streaming community Discord server.
                   </p>
                   <div className="mt-10 max-w-xl space-y-8 text-base leading-7 text-white lg:max-w-none">
-                    <div className="mt-10 text-left max-sm:text-center">
+                    <div className="mt-10 text-center max-sm:text-center">
                       <div className="max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-4 lg:flex-row lg:gap-4">
                         <a
                           onClick={handleLogin}
@@ -172,13 +172,6 @@ const Auth = () => {
                   </div>
                 </div>
               </div>
-              <img
-                src={spotiflyCode}
-                alt="Product screenshot"
-                className="w-[48rem] lg:max-w-full rounded-xl sm:w-[57rem] md:-ml-4 lg:-ml-0"
-                width={2432}
-                height={1442}
-              />
             </div>
           </div>
         </div>
